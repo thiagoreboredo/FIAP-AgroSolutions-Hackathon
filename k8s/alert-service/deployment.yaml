@@ -16,6 +16,9 @@ spec:
       containers:
         - name: alert-service
           image: ghcr.io/thiagoreboredo/agrosolutions/alert-service:latest
+          ports:
+            - containerPort: 8080
+              name: metrics
           envFrom:
             - configMapRef:
                 name: alert-service-config
