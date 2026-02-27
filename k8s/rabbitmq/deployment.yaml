@@ -13,12 +13,16 @@ spec:
       labels:
         app: rabbitmq
     spec:
-      containers:
+containers:
         - name: rabbitmq
-          image: rabbitmq:3.12-management-alpine
+          image: rabbitmq:3-management
+          env:
+            - name: RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS
+              value: "-rabbitmq_prometheus"
           ports:
             - containerPort: 5672
             - containerPort: 15672
+            - containerPort: 15692
           env:
             - name: RABBITMQ_DEFAULT_USER
               value: guest
