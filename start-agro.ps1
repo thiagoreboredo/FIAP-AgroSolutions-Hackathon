@@ -42,13 +42,20 @@ Write-Host "Aguardando o NGINX Ingress ficar pronto (isso pode levar 1 minuto)..
 Start-Sleep -Seconds 45 # Dá um tempo para o pod ser criado antes de dar o wait
 kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
 
-# 7. Microsserviços
+# 7. Deploy de Microsserviços
 Write-Host "Deploy de Microsservicos..." -ForegroundColor Green
 kubectl apply -f k8s/identity-service/
 kubectl apply -f k8s/property-service/
 kubectl apply -f k8s/ingestion-service/
 kubectl apply -f k8s/alert-service/
+
+# 8. Deploy do Ingress Controller (NGINX)
+Write-Host "Deploy do Ingress Controller (NGINX)..." -ForegroundColor Green
 kubectl apply -f k8s/ingress.yaml
+
+# 9. Deploy do Monitoramento (Prometheus e Grafana)
+Write-Host "Deploy da Stack de Monitoramento (Prometheus e Grafana)..." -ForegroundColor Green
+kubectl apply -f k8s/monitoring/
 
 # Forçar reinício para garantir consistência
 kubectl rollout restart deployment -n agrosolutions identity-service property-service ingestion-service alert-service
