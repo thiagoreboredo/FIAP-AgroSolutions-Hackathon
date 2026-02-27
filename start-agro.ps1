@@ -44,11 +44,11 @@ kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.
 
 # 7. Microsserviços
 Write-Host "Deploy de Microsserviços..." -ForegroundColor Green
-kubectl apply -f k8s/ingress.yaml
 kubectl apply -f k8s/identity-service/
 kubectl apply -f k8s/property-service/
 kubectl apply -f k8s/ingestion-service/
 kubectl apply -f k8s/alert-service/
+kubectl apply -f k8s/ingress.yaml
 
 # Forçar reinício para garantir consistência
 kubectl rollout restart deployment -n agrosolutions identity-service property-service ingestion-service alert-service
