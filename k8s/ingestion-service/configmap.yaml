@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingestion-service-config
+  namespace: agrosolutions
+data:
+  ASPNETCORE_ENVIRONMENT: "Production"
+  Jwt__Issuer: "AgroSolutions"
+  Jwt__Audience: "AgroSolutions"
+  RabbitMQ__Host: "rabbitmq"

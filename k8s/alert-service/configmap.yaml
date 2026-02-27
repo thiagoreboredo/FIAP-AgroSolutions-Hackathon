@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alert-service-config
+  namespace: agrosolutions
+data:
+  DOTNET_ENVIRONMENT: "Production"
+  RabbitMQ__Host: "rabbitmq"
+  PropertyServiceUrl: "http://property-service"
