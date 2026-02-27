@@ -40,7 +40,7 @@ spec:
             port:
               number: 80
       # Roteamento para a API de Ingestão de Sensores
-      - path: /api/sensor
+      - path: /api/ingest
         pathType: Prefix
         backend:
           service:
