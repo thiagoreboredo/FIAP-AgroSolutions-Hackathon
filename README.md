@@ -116,56 +116,45 @@ Este projeto foi desenvolvido como parte do Hackathon Final da FIAP e está disp
 
 ```mermaid
 graph TD
-    classDef client fill:#f9f9f9,stroke:#333,stroke-width:2px;
-    classDef api fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
-    classDef broker fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
-    classDef worker fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
-    classDef db fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
-    classDef obs fill:#eceff1,stroke:#455a64,stroke-width:2px;
+    classDef client fill:#f9f9f9,stroke:#333,stroke-width:2px
+    classDef api fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
+    classDef broker fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef worker fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    classDef db fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef obs fill:#eceff1,stroke:#455a64,stroke-width:2px
 
     User((Produtor Rural / Postman)):::client
-
-    subgraph K8s [Cluster Kubernetes Local - Namespace: agrosolutions]
-        
-        Gateway[NGINX Ingress / API Gateway]:::api
-        
-        subgraph APIs [Microsserviços]
-            IdAPI(Identity Service):::api
-            PropAPI(Property Service):::api
-            IngAPI(Ingestion Service):::api
-        end
-
-        subgraph Mensageria & Background
-            Broker{RabbitMQ}:::broker
-            Worker(Alert Worker Service):::worker
-        end
-
-        subgraph Persistência
-            DB[(PostgreSQL)]:::db
-        end
-
-        subgraph Observabilidade [Control Plane]
-            Prom(Prometheus):::obs
-            Graf(Grafana):::obs
-        end
-
-        Gateway -->|/api/auth| IdAPI
-        Gateway -->|/api/properties| PropAPI
-        Gateway -->|/api/sensor| IngAPI
-
-        IdAPI -->|CRUD| DB
-        PropAPI -->|CRUD| DB
-        
-        IngAPI -->|Publica Dados| Broker
-        Broker -->|Consome Dados| Worker
-        Worker -->|Atualiza Status| PropAPI
-
-        Prom -.->|Coleta Métricas| IdAPI
-        Prom -.->|Coleta Métricas| PropAPI
-        Prom -.->|Coleta Métricas| IngAPI
-        Prom -.->|Coleta Métricas| Worker
-        Graf -->|Visualiza Port 3000| Prom
-    end
+    
+    Gateway[NGINX Ingress / API Gateway]:::api
+    
+    IdAPI(Identity Service):::api
+    PropAPI(Property Service):::api
+    IngAPI(Ingestion Service):::api
+    
+    Broker{RabbitMQ}:::broker
+    Worker(Alert Worker Service):::worker
+    
+    DB[(PostgreSQL)]:::db
+    
+    Prom(Prometheus):::obs
+    Graf(Grafana):::obs
 
     User -->|HTTP Port 80| Gateway
+    
+    Gateway -->|/api/auth| IdAPI
+    Gateway -->|/api/properties| PropAPI
+    Gateway -->|/api/sensor| IngAPI
+
+    IdAPI -->|CRUD| DB
+    PropAPI -->|CRUD| DB
+    
+    IngAPI -->|Publica Dados| Broker
+    Broker -->|Consome Dados| Worker
+    Worker -->|Atualiza Status| PropAPI
+
+    Prom -.->|Coleta Métricas| IdAPI
+    Prom -.->|Coleta Métricas| PropAPI
+    Prom -.->|Coleta Métricas| IngAPI
+    Prom -.->|Coleta Métricas| Worker
+    Graf -->|Visualiza Port 3000| Prom
 ```
