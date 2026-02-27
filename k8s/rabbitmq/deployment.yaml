@@ -13,7 +13,7 @@ spec:
       labels:
         app: rabbitmq
     spec:
-containers:
+      containers:
         - name: rabbitmq
           image: rabbitmq:3-management
           env:

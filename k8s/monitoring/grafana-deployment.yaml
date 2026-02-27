@@ -26,13 +26,13 @@ spec:
                   key: admin-password
           volumeMounts:
             - name: grafana-provisioning
-              mountPath: /etc/grafana/provisioning/dashboards/dashboard.yaml
+              mountPath: /etc/grafana/provisioning/dashboards/dashboard-provider.yaml
               subPath: dashboard-provider.yaml
             - name: grafana-provisioning
               mountPath: /etc/grafana/provisioning/datasources/datasource.yaml
               subPath: datasource.yaml
             - name: grafana-dashboards
-              mountPath: /etc/grafana/provisioning/dashboards/dashboard.json
+              mountPath: /var/lib/grafana/dashboards/dashboard.json
               subPath: dashboard.json
             - name: grafana-storage
               mountPath: /var/lib/grafana

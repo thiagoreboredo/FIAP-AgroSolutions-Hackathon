@@ -4,7 +4,7 @@ metadata:
   name: grafana-dashboard
   namespace: agrosolutions
 data:
-  agrosolutions-dashboard.json: |
+  dashboard.json: |
     {
       "__inputs": [],
       "__requires": [
