@@ -64,7 +64,7 @@ A nossa arquitetura utiliza o **NGINX Ingress Controller** como API Gateway. O s
 * **APIs de Negócio (Gateway):** Disponíveis diretamente em `http://localhost/api/...`
 * **Painel de Monitoramento (Grafana):** Por questões de segurança (separação de Data Plane e Control Plane), o Grafana não é exposto no Gateway público. Para acessá-lo, abra um terminal isolado e execute o túnel interno:
   ```bash
-  kubectl port-forward svc/grafana 3000:3000 -n agrosolutions
+  kubectl port-forward svc/grafana 3000:80 -n agrosolutions
 ```
 
 ### 3. 🧪 Validação do Fluxo de Integração (Postman)
