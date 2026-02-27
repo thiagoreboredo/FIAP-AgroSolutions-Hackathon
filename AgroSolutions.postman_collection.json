@@ -1,0 +1,304 @@
+{
+  "info": {
+    "_postman_id": "47146766-0b66-411c-9cbc-52f092bb9225",
+    "name": "AgroSolutions Hackathon - Fluxo Completo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "25296051",
+    "_collection_link": "https://go.postman.co/collection/25296051-47146766-0b66-411c-9cbc-52f092bb9225?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "1. Identity - Registrar Usuário",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "if (jsonData.token) {\r",
+              "    // Pega a segunda parte do JWT (o payload)\r",
+              "    var payloadBase64 = jsonData.token.split('.')[1];\r",
+              "    \r",
+              "    // Ajusta o formato Base64Url para Base64 normal\r",
+              "    var padding = '='.repeat((4 - payloadBase64.length % 4) % 4);\r",
+              "    var base64 = (payloadBase64 + padding).replace(/\\-/g, '+').replace(/_/g, '/');\r",
+              "    \r",
+              "    // Decodifica e converte para JSON\r",
+              "    var decodedPayload = JSON.parse(atob(base64));\r",
+              "    \r",
+              "    // Salva o Token e o ID do usuário nas variáveis da coleção\r",
+              "    pm.collectionVariables.set(\"owner_id\", decodedPayload.sub);\r",
+              "    pm.collectionVariables.set(\"jwt_token\", jsonData.token);\r",
+              "    \r",
+              "    console.log(\"Variáveis atualizadas! OwnerID: \" + decodedPayload.sub);\r",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Thiago\",\r\n  \"email\": \"thiago@agrosolutions.com\",\r\n  \"password\": \"SenhaForte123!\"\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5001/api/auth/register",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. Property - Criar Propriedade",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();\r",
+              "\r",
+              "if (jsonData.id) {\r",
+              "    // Salva o ID da Propriedade nas variáveis da coleção\r",
+              "    pm.collectionVariables.set(\"property_id\", jsonData.id);\r",
+              "    console.log(\"Property ID salvo: \" + jsonData.id);\r",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{jwt_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Fazenda Vale Verde2\",\r\n  \"location\": \"Rio de Janeiro, RJ\",\r\n  \"totalAreaHectares\": 250.5,\r\n  \"ownerId\": \"{{owner_id}}\"\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5002/api/properties",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5002",
+          "path": [
+            "api",
+            "properties"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Property - Criar Talhão",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();\r",
+              "if (jsonData.id) {\r",
+              "    pm.collectionVariables.set(\"talhao_id\", jsonData.id);\r",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{jwt_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Talhão Norte2\",\r\n  \"areaHectares\": 50.0,\r\n  \"cropType\": \"Soja\",\r\n  \"propertyId\": \"{{property_id}}\"\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5002/api/talhoes",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5002",
+          "path": [
+            "api",
+            "talhoes"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. Ingestion - Enviar Dados do Sensor (Gerar Alerta)",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{jwt_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"talhaoId\": \"{{talhao_id}}\",\r\n  \"soilMoisture\": 12.5,\r\n  \"temperature\": 38.0,\r\n  \"precipitation\": 0.0\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5003/api/ingest",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5003",
+          "path": [
+            "api",
+            "ingest"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. Validar Resultado",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{jwt_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5002/api/talhoes/{{talhao_id}}/status",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5002",
+          "path": [
+            "api",
+            "talhoes",
+            "{{talhao_id}}",
+            "status"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "owner_id",
+      "value": ""
+    },
+    {
+      "key": "jwt_token",
+      "value": ""
+    },
+    {
+      "key": "property_id",
+      "value": ""
+    },
+    {
+      "key": "talhao_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
