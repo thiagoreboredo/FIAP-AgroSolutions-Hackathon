@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ingestion-service
-          image: agrosolutions/ingestion-service:latest
+          image: ghcr.io/thiagoreboredo/agrosolutions/ingestion-service:latest
           ports:
             - containerPort: 8080
           envFrom:

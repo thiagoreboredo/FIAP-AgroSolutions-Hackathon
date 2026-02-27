@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: alert-service
-          image: agrosolutions/alert-service:latest
+          image: ghcr.io/thiagoreboredo/agrosolutions/alert-service:latest
           envFrom:
             - configMapRef:
                 name: alert-service-config
