@@ -19,6 +19,12 @@ A AgroSolutions é uma cooperativa agrícola em transição para a **Agricultura
 
 ---
 
+## 🎥 Vídeo de Demonstração (Pitch e Execução)
+O vídeo com a apresentação da arquitetura, justificação técnica e demonstração do MVP a funcionar localmente no Kubernetes encontra-se no link abaixo:
+🔗 **[INSERIR O LINK DO YOUTUBE AQUI]**
+
+---
+
 ## 🏗️ Decisões Arquiteturais e Padrões (Fase 5)
 
 Nossa solução adota **Clean Architecture** e princípios **SOLID**:
@@ -105,6 +111,71 @@ O dashboard `AgroSolutions Overview` exibe métricas de umidade do solo e alerta
 
 ---
 
+## ⚙️ CI/CD e Qualidade de Software
+* **Pipeline de Integração Contínua:** Utilizámos o **GitHub Actions** para garantir a qualidade do código. Sempre que um *push* é feito, a esteira compila a solução e executa obrigatoriamente os **25 testes unitários** desenvolvidos, impedindo falhas em produção.
+
+---
+
+## ✅ Requisitos Não Funcionais
+
+* **Escalabilidade:** Garantida com **HPA (Horizontal Pod Autoscaler)** no `IngestionService` para suportar picos de ingestão IoT.
+* **Resiliência:** Garantida via **RabbitMQ**, evitando perda de dados caso o `AlertService` fique indisponível.
+* **Privacidade:** Garantida por **criptografia de senhas (BCrypt)**, uso de **Kubernetes Secrets** e **endpoint de deleção** conforme LGPD.
+
 ## 📄 Licença
 
 Este projeto foi desenvolvido como parte do Hackathon Final da FIAP e está disponível para fins educacionais.
+
+## 🧩 Diagrama de Arquitetura
+
+```mermaid
+graph TD
+    classDef client fill:#f9f9f9,stroke:#333,stroke-width:2px;
+    classDef api fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    classDef broker fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
+    classDef worker fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
+    classDef db fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+    classDef obs fill:#eceff1,stroke:#455a64,stroke-width:2px;
+
+    User((Produtor Rural)):::client
+
+    subgraph Kubernetes Cluster [Cluster Kubernetes / APIs]
+        Gateway[API Gateway / Ingress]:::api
+
+        IdAPI(Identity Service):::api
+        PropAPI(Property Service):::api
+        IngAPI(Ingestion Service):::api
+
+        Gateway --> IdAPI
+        Gateway --> PropAPI
+        Gateway --> IngAPI
+    end
+
+    User -->|HTTPS / JWT| Gateway
+
+    subgraph Mensageria & Background Workers
+        Broker{RabbitMQ}:::broker
+        Worker(Alert Worker Service):::worker
+
+        IngAPI -->|Publica Dados Sensor| Broker
+        Broker -->|Consome Dados| Worker
+        Worker -->|Alerta / Atualiza Status| PropAPI
+    end
+
+    subgraph Persistência
+        DB[(PostgreSQL)]:::db
+        IdAPI --> DB
+        PropAPI --> DB
+    end
+
+    subgraph Observabilidade [Prometheus & Grafana]
+        Prom(Prometheus):::obs
+        Graf(Grafana):::obs
+
+        Prom -.->|Coleta Métricas| IdAPI
+        Prom -.->|Coleta Métricas| PropAPI
+        Prom -.->|Coleta Métricas| IngAPI
+        Prom -.->|Coleta Métricas| Worker
+        Graf -->|Visualiza| Prom
+    end
+```
