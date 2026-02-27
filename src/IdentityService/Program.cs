@@ -5,6 +5,7 @@ using IdentityService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
+app.UseHttpMetrics();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -76,6 +78,7 @@ userGroup.MapDelete("/me", async (HttpContext http, IAuthService authService) =>
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
+app.MapMetrics();
 app.Run();
 
 public partial class Program { }

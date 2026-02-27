@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Prometheus;
 using PropertyService.Data;
 using PropertyService.DTOs;
 using PropertyService.Services;
@@ -32,6 +33,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+app.UseHttpMetrics();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -130,6 +132,7 @@ propertiesGroup.MapDelete("/owner/{ownerId:guid}", async (Guid ownerId, IPropert
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
+app.MapMetrics();
 app.Run();
 
 public partial class Program { }

@@ -1,8 +1,15 @@
 using AlertService.Consumers;
 using AlertService.Services;
 using MassTransit;
+using Prometheus;
 
 var builder = Host.CreateApplicationBuilder(args);
+
+// --- CONFIGURAÇÃO DO PROMETHEUS PARA WORKER ---
+// Como não temos app.MapMetrics(), iniciamos um servidor de métricas dedicado
+// Vamos usar a porta 8080, que é o padrão que configuramos no Kubernetes
+var metricServer = new KestrelMetricServer(port: 8080); 
+metricServer.Start();
 
 builder.Services.AddHttpClient<IPropertyStatusClient, PropertyStatusClient>(client =>
 {

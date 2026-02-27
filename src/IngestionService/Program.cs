@@ -4,6 +4,7 @@ using IngestionService.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+app.UseHttpMetrics();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -52,6 +54,7 @@ app.MapPost("/api/ingest", async (SensorDataRequest request, IIngestionService s
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
+app.MapMetrics();
 app.Run();
 
 public partial class Program { }
