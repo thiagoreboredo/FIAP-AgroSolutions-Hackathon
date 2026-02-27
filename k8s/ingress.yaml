@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: agrosolutions-gateway
+  namespace: agrosolutions
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: localhost
+    http:
+      paths:
+      # Roteamento para a API de Identidade
+      - path: /api/auth
+        pathType: Prefix
+        backend:
+          service:
+            name: identity-service
+            port:
+              number: 80
+      - path: /api/user
+        pathType: Prefix
+        backend:
+          service:
+            name: identity-service
+            port:
+              number: 80
+      # Roteamento para a API de Propriedades
+      - path: /api/properties
+        pathType: Prefix
+        backend:
+          service:
+            name: property-service
+            port:
+              number: 80
+      - path: /api/talhoes
+        pathType: Prefix
+        backend:
+          service:
+            name: property-service
+            port:
+              number: 80
+      # Roteamento para a API de Ingestão de Sensores
+      - path: /api/sensor
+        pathType: Prefix
+        backend:
+          service:
+            name: ingestion-service
+            port:
+              number: 80

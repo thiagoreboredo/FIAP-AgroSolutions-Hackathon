@@ -33,8 +33,18 @@ while ($true) {
     Start-Sleep -Seconds 3
 }
 
-# 5. Microsserviços
+# 5. Ingress Controller (NGINX)
+Write-Host "Instalando NGINX Ingress Controller..."
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.3/deploy/static/provider/cloud/deploy.yaml
+
+# 6. Aguardar Ingress Controller (Saúde do NGINX)
+Write-Host "Aguardando o NGINX Ingress ficar pronto (isso pode levar 1 minuto)..."
+Start-Sleep -Seconds 45 # Dá um tempo para o pod ser criado antes de dar o wait
+kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
+
+# 7. Microsserviços
 Write-Host "Deploy de Microsserviços..." -ForegroundColor Green
+kubectl apply -f k8s/ingress.yaml
 kubectl apply -f k8s/identity-service/
 kubectl apply -f k8s/property-service/
 kubectl apply -f k8s/ingestion-service/

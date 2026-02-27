@@ -50,15 +50,14 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"name\": \"Thiago\",\r\n  \"email\": \"thiago@agrosolutions.com\",\r\n  \"password\": \"SenhaForte123!\"\r\n}"
+          "raw": "{\r\n  \"name\": \"Thiago\",\r\n  \"email\": \"thiago2@agrosolutions.com\",\r\n  \"password\": \"SenhaForte123!\"\r\n}"
         },
         "url": {
-          "raw": "http://localhost:5001/api/auth/register",
+          "raw": "http://localhost/api/auth/register",
           "protocol": "http",
           "host": [
             "localhost"
           ],
-          "port": "5001",
           "path": [
             "api",
             "auth",
@@ -112,12 +111,11 @@
           "raw": "{\r\n  \"name\": \"Fazenda Vale Verde2\",\r\n  \"location\": \"Rio de Janeiro, RJ\",\r\n  \"totalAreaHectares\": 250.5,\r\n  \"ownerId\": \"{{owner_id}}\"\r\n}"
         },
         "url": {
-          "raw": "http://localhost:5002/api/properties",
+          "raw": "http://localhost/api/properties",
           "protocol": "http",
           "host": [
             "localhost"
           ],
-          "port": "5002",
           "path": [
             "api",
             "properties"
@@ -167,12 +165,11 @@
           "raw": "{\r\n  \"name\": \"Talhão Norte2\",\r\n  \"areaHectares\": 50.0,\r\n  \"cropType\": \"Soja\",\r\n  \"propertyId\": \"{{property_id}}\"\r\n}"
         },
         "url": {
-          "raw": "http://localhost:5002/api/talhoes",
+          "raw": "http://localhost/api/talhoes",
           "protocol": "http",
           "host": [
             "localhost"
           ],
-          "port": "5002",
           "path": [
             "api",
             "talhoes"
@@ -206,12 +203,11 @@
           "raw": "{\r\n  \"talhaoId\": \"{{talhao_id}}\",\r\n  \"soilMoisture\": 12.5,\r\n  \"temperature\": 38.0,\r\n  \"precipitation\": 0.0\r\n}"
         },
         "url": {
-          "raw": "http://localhost:5003/api/ingest",
+          "raw": "http://localhost/api/ingest",
           "protocol": "http",
           "host": [
             "localhost"
           ],
-          "port": "5003",
           "path": [
             "api",
             "ingest"
@@ -241,12 +237,11 @@
           }
         ],
         "url": {
-          "raw": "http://localhost:5002/api/talhoes/{{talhao_id}}/status",
+          "raw": "http://localhost/api/talhoes/{{talhao_id}}/status",
           "protocol": "http",
           "host": [
             "localhost"
           ],
-          "port": "5002",
           "path": [
             "api",
             "talhoes",

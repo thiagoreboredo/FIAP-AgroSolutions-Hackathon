@@ -57,28 +57,14 @@ Na raiz do projeto, execute o script PowerShell passando seu Token do GitHub (ne
 ./start-agro.ps1 -GithubToken "seu_token_aqui"
 ```
 
-### 2. Exposição de Portas (Túneis)
+### 2. Acesso e Gateway (NGINX Ingress)
 
-Mantenha abertos terminais separados para os seguintes túneis:
+A nossa arquitetura utiliza o **NGINX Ingress Controller** como API Gateway. O script de inicialização já configura o roteamento para que todas as APIs de negócio estejam acessíveis unificadamente através da porta 80 do seu localhost.
 
-**Identity (5001):**
-```bash
-kubectl port-forward svc/identity-service 5001:80 -n agrosolutions
-```
-
-**Property (5002):**
-```bash
-kubectl port-forward svc/property-service 5002:80 -n agrosolutions
-```
-
-**Ingestion (5003):**
-```bash
-kubectl port-forward svc/ingestion-service 5003:80 -n agrosolutions
-```
-
-**Grafana (3000):**
-```bash
-kubectl port-forward svc/grafana 3000:3000 -n agrosolutions
+* **APIs de Negócio (Gateway):** Disponíveis diretamente em `http://localhost/api/...`
+* **Painel de Monitoramento (Grafana):** Por questões de segurança (separação de Data Plane e Control Plane), o Grafana não é exposto no Gateway público. Para acessá-lo, abra um terminal isolado e execute o túnel interno:
+  ```bash
+  kubectl port-forward svc/grafana 3000:3000 -n agrosolutions
 ```
 
 ### 3. 🧪 Validação do Fluxo de Integração (Postman)
@@ -137,45 +123,49 @@ graph TD
     classDef db fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
     classDef obs fill:#eceff1,stroke:#455a64,stroke-width:2px;
 
-    User((Produtor Rural)):::client
+    User((Produtor Rural / Postman)):::client
 
-    subgraph Kubernetes Cluster [Cluster Kubernetes / APIs]
-        Gateway[API Gateway / Ingress]:::api
+    subgraph K8s [Cluster Kubernetes Local - Namespace: agrosolutions]
+        
+        Gateway[NGINX Ingress / API Gateway]:::api
+        
+        subgraph APIs [Microsserviços]
+            IdAPI(Identity Service):::api
+            PropAPI(Property Service):::api
+            IngAPI(Ingestion Service):::api
+        end
 
-        IdAPI(Identity Service):::api
-        PropAPI(Property Service):::api
-        IngAPI(Ingestion Service):::api
+        subgraph Mensageria & Background
+            Broker{RabbitMQ}:::broker
+            Worker(Alert Worker Service):::worker
+        end
 
-        Gateway --> IdAPI
-        Gateway --> PropAPI
-        Gateway --> IngAPI
-    end
+        subgraph Persistência
+            DB[(PostgreSQL)]:::db
+        end
 
-    User -->|HTTPS / JWT| Gateway
+        subgraph Observabilidade [Control Plane]
+            Prom(Prometheus):::obs
+            Graf(Grafana):::obs
+        end
 
-    subgraph Mensageria & Background Workers
-        Broker{RabbitMQ}:::broker
-        Worker(Alert Worker Service):::worker
+        Gateway -->|/api/auth| IdAPI
+        Gateway -->|/api/properties| PropAPI
+        Gateway -->|/api/sensor| IngAPI
 
-        IngAPI -->|Publica Dados Sensor| Broker
+        IdAPI -->|CRUD| DB
+        PropAPI -->|CRUD| DB
+        
+        IngAPI -->|Publica Dados| Broker
         Broker -->|Consome Dados| Worker
-        Worker -->|Alerta / Atualiza Status| PropAPI
-    end
-
-    subgraph Persistência
-        DB[(PostgreSQL)]:::db
-        IdAPI --> DB
-        PropAPI --> DB
-    end
-
-    subgraph Observabilidade [Prometheus & Grafana]
-        Prom(Prometheus):::obs
-        Graf(Grafana):::obs
+        Worker -->|Atualiza Status| PropAPI
 
         Prom -.->|Coleta Métricas| IdAPI
         Prom -.->|Coleta Métricas| PropAPI
         Prom -.->|Coleta Métricas| IngAPI
         Prom -.->|Coleta Métricas| Worker
-        Graf -->|Visualiza| Prom
+        Graf -->|Visualiza Port 3000| Prom
     end
+
+    User -->|HTTP Port 80| Gateway
 ```
