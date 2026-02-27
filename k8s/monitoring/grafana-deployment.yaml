@@ -33,13 +33,14 @@ spec:
               value: "false"
           volumeMounts:
             - name: grafana-provisioning
-              mountPath: /etc/grafana/provisioning/datasources
-              subPath: datasources
+              mountPath: /etc/grafana/provisioning/dashboards/dashboard.yaml
+              subPath: dashboard-provider.yaml
             - name: grafana-provisioning
-              mountPath: /etc/grafana/provisioning/dashboards
-              subPath: dashboards
-            - name: grafana-dashboard
-              mountPath: /var/lib/grafana/dashboards
+              mountPath: /etc/grafana/provisioning/datasources/datasource.yaml
+              subPath: datasource.yaml
+            - name: grafana-dashboards
+              mountPath: /etc/grafana/provisioning/dashboards/dashboard.json
+              subPath: dashboard.json
             - name: grafana-storage
               mountPath: /var/lib/grafana
           resources:

@@ -4,7 +4,18 @@ metadata:
   name: grafana-provisioning
   namespace: agrosolutions
 data:
-  datasources/datasource.yaml: |
+  dashboard-provider.yaml: |
+    apiVersion: 1
+    providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /etc/grafana/provisioning/dashboards
+  datasource.yaml: |
     apiVersion: 1
     datasources:
       - name: Prometheus
@@ -12,16 +23,3 @@ data:
         access: proxy
         url: http://prometheus:9090
         isDefault: true
-        editable: false
-
-  dashboards/dashboard.yaml: |
-    apiVersion: 1
-    providers:
-      - name: AgroSolutions
-        orgId: 1
-        folder: AgroSolutions
-        type: file
-        disableDeletion: false
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards
