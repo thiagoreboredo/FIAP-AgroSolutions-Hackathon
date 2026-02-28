@@ -21,7 +21,7 @@ A AgroSolutions é uma cooperativa agrícola em transição para a **Agricultura
 
 ## 🎥 Vídeo de Demonstração (Pitch e Execução)
 O vídeo com a apresentação da arquitetura, justificação técnica e demonstração do MVP a funcionar localmente no Kubernetes encontra-se no link abaixo:
-🔗 **[INSERIR O LINK DO YOUTUBE AQUI]**
+🔗 https://youtu.be/jqLj59a01MQ
 
 ---
 
